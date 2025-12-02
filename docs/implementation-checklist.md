@@ -63,8 +63,8 @@ This checklist maps the high-level spec in `high-level-plan.md` to concrete impl
 
 
 ## Project scaffolding
-- [ ] Create repo and root README (this repo already exists; add README note)
-- [ ] Scaffold Next.js app (App Router + TypeScript)
+- [x] Create repo and root README (this repo already exists; add README note)
+- [x] Scaffold Next.js app (App Router + TypeScript)
   - Suggested command:
 
 ```bash
@@ -72,7 +72,7 @@ npx create-next-app@latest app --ts --import-alias "@/*"
 cd app
 ```
 
-- [ ] Add `docs/high-level-plan.md` and `docs/implementation-checklist.md` (this file)
+- [x] Add `docs/high-level-plan.md` and `docs/implementation-checklist.md` (this file)
 
 ## Env & config
 - [ ] Add `lib/config.ts` (or `.env local`) entries:

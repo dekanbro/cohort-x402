@@ -1,0 +1,20 @@
+:root {
+  --bg: #ffffff;
+  --fg: #0f1720;
+  --muted: #667085;
+  --accent: #2563eb;
+  --surface: #f8fafc;
+}
+
+.dark {
+  --bg: #0b1220;
+  --fg: #e6eef8;
+  --muted: #9fb0c8;
+  --accent: #60a5fa;
+  --surface: #071024;
+}
+
+/* Helpful semantic tokens */
+:root, .dark {
+  --radius: 8px;
+}
