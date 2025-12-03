@@ -3,7 +3,7 @@
 This repository provides a minimal scaffold to implement and test an x402 paywall flow:
 
 - A minimal Next.js app (TypeScript, App Router)
-- `/api/secret` route that returns `402` when unpaid and verifies payments with a facilitator when provided
+- `/api/secret` route that returns `402` when unpaid and verifies Base USDC payments locally via on-chain txHash checks
 - A Mock Facilitator (Express) exposing `/verify`, `/settle`, `/supported`, `/open`, `/test` for local testing
 - An `agent-client.ts` script that demonstrates an autonomous agent paying and retrieving the protected resource
 
@@ -50,6 +50,15 @@ Notes
 
 Environment
 - Copy `.env.example` to `.env` and update values as needed before running in other environments.
+
+Environment variables
+- Copy `.env.example` to `.env` and update values as needed before running in other environments.
+- For local development you can use the Mock Facilitator (default `http://localhost:9000`). In production use the network-specific facilitator URL returned by x402 docs (e.g. `https://openx402.ai/base`).
+- `PRICE_IN_USDC` is a human-friendly decimal string (e.g. `0.0001`). When making on-chain transfers convert with `ethers.parseUnits(PRICE_IN_USDC, 6)` for USDC on Base.
+- If you want an autonomous agent to test payments, set `AGENT_PRIVATE_KEY` in your `.env` (do not commit private keys).
+
+Startup validation
+- The server includes a small `requireConfig()` helper (in `lib/config.ts`) that will assert critical env vars in production. You can call it at startup if you want to fail-fast on missing config.
 
 Next steps
 - If you want, I can add a `pnpm` lockfile or run `pnpm install` to generate `pnpm-lock.yaml` (I can't run it from here, but I can show the exact command to run locally).

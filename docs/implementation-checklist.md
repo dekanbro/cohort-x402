@@ -75,31 +75,31 @@ cd app
 - [x] Add `docs/high-level-plan.md` and `docs/implementation-checklist.md` (this file)
 
 ## Env & config
-- [ ] Add `lib/config.ts` (or `.env local`) entries:
+- [X] Add `lib/config.ts` (or `.env local`) entries:
   - `X402_FACILITATOR_URL` (default: `https://open.x402.host`)
   - `X402_NETWORK` (e.g., `base-mainnet` or testnet name)
   - `USDC_BASE_ADDRESS`
   - `SERVICE_RECIPIENT_ADDRESS`
   - `PRICE_IN_USDC_UNITS` (expressed in raw token units; confirm with facilitator)
   - `AGENT_PRIVATE_KEY` (for local agent testing)
-- [ ] Add `.env.example` with placeholder values
+- [X] Add `.env.example` with placeholder values
 
 ## Backend: `app/api/secret/route.ts`
-- [ ] Implement GET handler that:
+- [X] Implement GET handler that:
   - Reads `X-PAYMENT` header (or agreed header name)
   - If missing or invalid → returns `402` JSON with `paymentRequirements`
   - If present → parse payload and call facilitator `/verify`
   - On verify success → optionally call `/settle` → return `200` with content
   - On verify failure → return `402` (or `403`) with reason
-- [ ] Define `paymentRequirements` structure in code to match docs; centralize in `lib/x402.ts` or `lib/payment.ts`
-- [ ] Implement error handling and idempotency for repeated attempts
+- [X] Define `paymentRequirements` structure in code to match docs; centralize in `lib/x402.ts` or `lib/payment.ts`
+- [X] Implement error handling and idempotency for repeated attempts
 
 ## Facilitator integration
-- [ ] Inspect `open.x402.host` docs (or fetch open API spec) to confirm endpoints:
+- [X] Inspect `open.x402.host` docs (or fetch open API spec) to confirm endpoints:
   - `/verify` — payload and response shape
   - `/settle` — whether separate call required or optional
-- [ ] Implement server-side helpers to call the facilitator (with retries and timeouts)
-- [ ] For development, create a **Mock Facilitator** (Express or internal route) with `/verify` and `/settle` that simulates success/failure; use this for unit/E2E tests to avoid on-chain costs:
+- [X] Implement server-side helpers to call the facilitator (with retries and timeouts)
+- [X] For development, create a **Mock Facilitator** (Express or internal route) with `/verify` and `/settle` that simulates success/failure; use this for unit/E2E tests to avoid on-chain costs:
   - `/mock-facilitator/verify` accepts the same request shape and responds with `{ valid: true, ... }`
   - `/mock-facilitator/settle` responds with simulated tx info
 

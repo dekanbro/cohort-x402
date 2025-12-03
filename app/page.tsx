@@ -1,4 +1,5 @@
 import React from 'react';
+import Link from 'next/link';
 
 export default function Page() {
   return (
@@ -8,7 +9,7 @@ export default function Page() {
         Demo: a small Next.js app that protects `/api/secret` behind an x402 paywall.
       </p>
       <p>
-        Open <a href="/secret">/secret</a> to try the flow.
+        Open <Link href="/secret">/secret</Link> to try the flow.
       </p>
     </main>
   );

@@ -1,16 +1,50 @@
 :root {
-  --bg: #ffffff;
-  --fg: #0f1720;
-  --muted: #667085;
-  --accent: #2563eb;
-  --surface: #f8fafc;
+  /* Moloch scale */
+  --moloch-100: #FAEEEB;
+  --moloch-200: #EFC5BB;
+  --moloch-300: #E39B8B;
+  --moloch-400: #D25C41;
+  --moloch-500: #BD482D;
+  --moloch-600: #8B3521;
+  --moloch-700: #5C2316;
+  --moloch-800: #29100A;
+
+  /* Scroll scale */
+  --scroll-100: #F9F7E7;
+  --scroll-200: #ECE5AC;
+  --scroll-300: #DCCD6A;
+  --scroll-400: #D2C141;
+  --scroll-500: #B5A22C;
+  --scroll-600: #837820;
+  --scroll-700: #534A13;
+  --scroll-800: #211E07;
+
+  /* Neutral scale */
+  --neutral-100: #F1EFEE;
+  --neutral-200: #D5CECD;
+  --neutral-300: #B9AEAC;
+  --neutral-400: #9E8E8A;
+  --neutral-500: #806F6B;
+  --neutral-600: #645754;
+  --neutral-700: #433937;
+  --neutral-800: #221D1C;
+  --neutral-white: #FAFAFA;
+  --neutral-black: #0D0D0D;
+
+  /* Semantic tokens */
+  --bg: var(--scroll-100);
+  --fg: var(--neutral-800);
+  --muted: var(--neutral-400);
+  --accent: var(--moloch-400);
+  --surface: var(--neutral-white);
 }
 
 .dark {
-  --bg: #0b1220;
-  --fg: #e6eef8;
-  --muted: #9fb0c8;
-  --accent: #60a5fa;
+  /* Dark mode mappings */
+  --bg: var(--neutral-black);
+  --fg: var(--neutral-white);
+  --muted: var(--neutral-600);
+  --accent: var(--moloch-300);
   --surface: #071024;
 }
 

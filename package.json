@@ -6,27 +6,34 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start",
-    "mock-facilitator": "node mock-facilitator/index.js",
-    "agent": "node dist/agent-client.js",
-    "agent:ts": "ts-node --esm agent-client.ts"
+    "start": "next start"
   },
   "dependencies": {
-    "ethers": "^6.0.0",
-    "express": "^4.18.2",
-    "next": "^14.0.0",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "@radix-ui/react-slot": "^1.0.0",
+    "@tanstack/react-query": "^5.90.11",
+    "@wagmi/connectors": "^7.0.2",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "ethers": "^6.15.0",
+    "express": "^5.2.1",
+    "lucide-react": "^0.264.0",
+    "next": "^16.0.6",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "tailwind-merge": "^3.4.0",
+    "viem": "^2.40.3",
+    "wagmi": "^3.0.2"
   },
   "devDependencies": {
-    "@types/express": "^4.17.17",
-    "@types/node": "^20.0.0",
     "@tailwindcss/postcss": "^4.1.17",
+    "@types/express": "^5.0.6",
+    "@types/node": "^24.10.1",
     "@types/react": "19.2.7",
     "autoprefixer": "^10.4.22",
+    "dotenv": "^17.2.3",
     "postcss": "^8.5.6",
     "tailwindcss": "^4.1.17",
-    "ts-node": "^10.9.1",
-    "typescript": "^5.4.2"
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
   }
 }
