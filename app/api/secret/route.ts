@@ -9,7 +9,11 @@ export async function GET(req: Request) {
 
   if (!paymentHeader) {
     console.debug('[api/secret] no x-402-payment header, building paymentRequirements');
-    const paymentRequirements = buildPaymentRequirements({ amount: PRICE_IN_USDC, description: 'Access to /api/secret once' });
+    const baseRequirements = buildPaymentRequirements({ amount: PRICE_IN_USDC, description: 'Access to /api/secret once' });
+    const paymentRequirements =
+      process.env.ENABLE_EIP3009 === 'true'
+        ? { ...baseRequirements, scheme: 'exact' as const }
+        : baseRequirements;
     console.debug('[api/secret] 402 paymentRequirements', paymentRequirements);
     return new Response(JSON.stringify({ paymentRequirements }), {
       status: 402,

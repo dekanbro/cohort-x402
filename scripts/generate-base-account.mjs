@@ -13,6 +13,8 @@ async function main() {
   console.log('- Send ~0.01 USDC on Base to this address for payments.');
   console.log('- Add the private key to your env, for example:');
   console.log('    AGENT_PRIVATE_KEY=', pk);
+  console.log('    # or for settlement wallet:');
+  console.log('    SETTLEMENT_PRIVATE_KEY=', pk);
 }
 
 main().catch((err) => {

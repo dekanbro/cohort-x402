@@ -1,4 +1,5 @@
 import 'dotenv/config';
+import crypto from 'node:crypto';
 import { createWalletClient, http, parseUnits } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
 import { base } from 'viem/chains';
@@ -63,26 +64,97 @@ async function run() {
   const usdcAddress = paymentReq.tokenAddress;
   const recipient = paymentReq.recipient;
 
-  console.log('Sending real USDC transfer from agent wallet...');
-  const txHashReal = await walletClient.writeContract({
-    address: usdcAddress,
-    abi: erc20TransferAbi,
-    functionName: 'transfer',
-    args: [recipient, amount],
-  });
-  console.log('Sent tx hash:', txHashReal);
+  const useEip3009 = process.env.ENABLE_EIP3009 === 'true';
 
-  const payment = {
-    x402Version: 1,
-    paymentPayload: {
-      scheme: paymentReq.scheme || 'evm-txhash',
-      network: paymentReq.network || 'base',
-      payload: {
-        txHash: txHashReal,
+  let payment;
+
+  if (useEip3009) {
+    console.log('Building EIP-3009 authorization instead of sending tx...');
+
+    const now = Math.floor(Date.now() / 1000);
+    const validAfter = BigInt(now);
+    const validBefore = BigInt(now + 3600);
+    const nonce = `0x${crypto.randomBytes(32).toString('hex')}`; // bytes32 nonce
+
+    const domain = {
+      name: process.env.EIP3009_DOMAIN_NAME || 'USD Coin',
+      version: process.env.EIP3009_DOMAIN_VERSION || '2',
+      chainId: 8453,
+      verifyingContract: usdcAddress,
+    };
+
+    const types = {
+      TransferWithAuthorization: [
+        { name: 'from', type: 'address' },
+        { name: 'to', type: 'address' },
+        { name: 'value', type: 'uint256' },
+        { name: 'validAfter', type: 'uint256' },
+        { name: 'validBefore', type: 'uint256' },
+        { name: 'nonce', type: 'bytes32' },
+      ],
+    };
+
+    const message = {
+      from: account.address,
+      to: recipient,
+      value: amount,
+      validAfter,
+      validBefore,
+      nonce,
+    };
+
+    const signature = await walletClient.signTypedData({
+      account,
+      domain,
+      types,
+      primaryType: 'TransferWithAuthorization',
+      message,
+    });
+
+    payment = {
+      x402Version: 1,
+      paymentPayload: {
+        scheme: 'exact',
+        network: paymentReq.network || 'base',
+        payload: {
+          authorization: {
+            from: message.from,
+            to: message.to,
+            value: message.value.toString(),
+            validAfter: message.validAfter.toString(),
+            validBefore: message.validBefore.toString(),
+            nonce: message.nonce,
+          },
+          signature,
+        },
       },
-    },
-    paymentRequirements: paymentReq,
-  };
+      paymentRequirements: {
+        ...paymentReq,
+        scheme: 'exact',
+      },
+    };
+  } else {
+    console.log('Sending real USDC transfer from agent wallet...');
+    const txHashReal = await walletClient.writeContract({
+      address: usdcAddress,
+      abi: erc20TransferAbi,
+      functionName: 'transfer',
+      args: [recipient, amount],
+    });
+    console.log('Sent tx hash:', txHashReal);
+
+    payment = {
+      x402Version: 1,
+      paymentPayload: {
+        scheme: paymentReq.scheme || 'evm-txhash',
+        network: paymentReq.network || 'base',
+        payload: {
+          txHash: txHashReal,
+        },
+      },
+      paymentRequirements: paymentReq,
+    };
+  }
 
   console.log('Calling /api/payments/verify as external agent...');
   const verifyRes = await fetch(verifyUrl, {
@@ -108,7 +180,7 @@ async function run() {
       'Content-Type': 'application/json',
       'x-api-key': apiKey,
     },
-    body: JSON.stringify({ txHash: payment.paymentPayload.payload.txHash }),
+    body: JSON.stringify(payment),
   });
   const settleBody = await settleRes.json().catch(() => ({}));
   console.log('Settle status:', settleRes.status, settleBody);

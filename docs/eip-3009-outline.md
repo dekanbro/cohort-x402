@@ -134,7 +134,7 @@ Extend or add `lib/settlePayment.ts`:
       - `transferWithAuthorization(from, to, value, validAfter, validBefore, nonce, v, r, s)`.
     - Return `{ txHash, status: 'submitted' | 'confirmed' }`.
 
-Guard all EIP-3009 paths with e.g. `ENABLE_EIP3009=true` in env.
+Guard all EIP-3009 paths with e.g. `ENABLE_EIP3009=true` in env, and surface a corresponding `NEXT_PUBLIC_ENABLE_EIP3009=true` flag so the UI can show "Sign message" instead of "Pay with wallet" when exact/EIP-3009 is active.
 
 **5. Wire server routes to dispatcher**
 
@@ -212,11 +212,11 @@ External clients can then choose a scheme they support.
 
 To avoid a huge diff, I’d flip things on in this order:
 
-1. Implement `verifyPayment` + `verifyEip3009Authorization` + `/supported` changes, all **behind `ENABLE_EIP3009`**.
-2. Extend `/settle` to support `"exact"` (still behind flag).
-3. Add an **agent-only EIP-3009 path**:
+1. Implement `verifyPayment` + `verifyEip3009Authorization` + `/supported` changes, all **behind `ENABLE_EIP3009`** (done).
+2. Extend `/settle` to support `"exact"` (still behind flag, done).
+3. Add an **agent-only EIP-3009 path** (done):
    - In agentClientCore.ts, if `USE_EIP3009`:
      - Build an authorization + signature instead of doing a USDC `transfer`.
      - Send `scheme: "exact"` to `/api/payments/verify` and `/settle`.
-4. Once stable, consider a browser UX toggle to choose between tx-hash and exact.
+4. Once stable, consider a browser UX toggle to choose between tx-hash and exact (initial copy tweak wired: when `NEXT_PUBLIC_ENABLE_EIP3009` is set, the secret page shows "Sign message" instead of "Pay with wallet").
 
