@@ -1,4 +1,4 @@
-import { parseUnits } from 'viem';
+import { parseUnits, verifyTypedData } from 'viem';
 import type { PaymentRequirements } from './payment';
 
 export type Eip3009Authorization = {
@@ -52,8 +52,51 @@ export async function verifyEip3009Authorization(
     return { valid: false, reason: 'authorization_expired' };
   }
 
-  // NOTE: we are currently NOT verifying the signature; this is a placeholder.
-  // A future iteration should use viem's verifyTypedData with the USDC EIP-712 domain.
+  // EIP-712 signature verification for EIP-3009 style authorization.
+  try {
+    const domain = {
+      // These can optionally be overridden via env if needed
+      name: process.env.EIP3009_DOMAIN_NAME || 'USD Coin',
+      version: process.env.EIP3009_DOMAIN_VERSION || '2',
+      chainId: 8453,
+      verifyingContract: paymentRequirements.tokenAddress as `0x${string}`,
+    } as const;
+
+    const types = {
+      TransferWithAuthorization: [
+        { name: 'from', type: 'address' },
+        { name: 'to', type: 'address' },
+        { name: 'value', type: 'uint256' },
+        { name: 'validAfter', type: 'uint256' },
+        { name: 'validBefore', type: 'uint256' },
+        { name: 'nonce', type: 'bytes32' },
+      ],
+    } as const;
+
+    const message = {
+      from: authorization.from as `0x${string}`,
+      to: authorization.to as `0x${string}`,
+      value: BigInt(authorization.value),
+      validAfter: BigInt(authorization.validAfter),
+      validBefore: BigInt(authorization.validBefore),
+      nonce: authorization.nonce as `0x${string}`,
+    } as const;
+
+    const signer = await verifyTypedData({
+      domain,
+      types,
+      primaryType: 'TransferWithAuthorization',
+      message,
+      signature: signature as `0x${string}`,
+      address: authorization.from as `0x${string}`,
+    });
+
+    if (!signer) {
+      return { valid: false, reason: 'invalid_signature' };
+    }
+  } catch (e: any) {
+    return { valid: false, reason: e?.message || 'signature_verification_failed' };
+  }
 
   return { valid: true };
 }
