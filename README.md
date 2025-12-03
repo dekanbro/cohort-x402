@@ -1,11 +1,12 @@
 # cohortx402 — x402 demo scaffold
 
-This repository provides a minimal scaffold to implement and test an x402 paywall flow:
+This repository provides a minimal scaffold to implement and test an x402-style paywall flow **without** any external facilitator:
 
 - A minimal Next.js app (TypeScript, App Router)
 - `/api/secret` route that returns `402` when unpaid and verifies Base USDC payments locally via on-chain txHash checks
-- A Mock Facilitator (Express) exposing `/verify`, `/settle`, `/supported`, `/open`, `/test` for local testing
-- An `agent-client.ts` script that demonstrates an autonomous agent paying and retrieving the protected resource
+- Local facilitator-style endpoints `/api/payments/verify` and `/api/payments/settle` with API key auth
+- A browser flow on `/secret` that uses MetaMask to send a real Base USDC transfer
+- A Node agent script (`scripts/agent-client.mjs`) and VS Code task that simulate an external agent paying and unlocking the same secret
 
 Quick start (Linux / bash)
 
@@ -21,41 +22,33 @@ npm install -g pnpm
 pnpm install
 ```
 
-3. Start the mock facilitator in one terminal:
-
-```bash
-pnpm run mock-facilitator
-```
-
-4. In another terminal, run the Next.js app in dev mode:
+3. Run the Next.js app in dev mode:
 
 ```bash
 pnpm dev
 ```
 
-5. Open the demo page at `http://localhost:3000/secret` and click "Load Secret" → "Pay (dummy proof) & Unlock" to exercise the local flow.
+4. Open the demo page at `http://localhost:3000/secret` and click **"Load Secret"** → **"Pay with Wallet"** to pay with MetaMask and unlock the secret via on-chain verification.
 
-6. Run the agent script (dev using `ts-node`):
+5. To run the external agent demo (from VS Code):
+	- Use the task **"Test Secret API (agent-client)"**, which runs `node scripts/agent-client.mjs`.
+	- The agent reads config from `.env`, sends a real Base USDC transfer from `AGENT_PRIVATE_KEY`, calls `/api/payments/verify` and `/settle`, then unlocks `/api/secret` with the same x402-style payload.
 
-```bash
-npx ts-node --esm agent-client.ts http://localhost:3000/api/secret
-```
-
-Alternative: compile or run the JS build of the agent if you transpile TypeScript to `dist/`.
+For a detailed walkthrough of both flows, see `docs/demo-happy-path.md`.
 
 Notes
-- This scaffold is a starting point for local E2E tests and uses a Mock Facilitator to avoid real on-chain activity.
-- The mock facilitator listens on `http://localhost:9000` by default. Update `X402_FACILITATOR_URL` in the environment to point to a real facilitator when you're ready.
-- Replace the dummy client payment logic with real wallet integration (wagmi + viem or an x402 SDK) for production usage.
+- This scaffold is a starting point for local E2E tests and demonstrates **real** on-chain Base USDC payments.
+- You can still experiment with external facilitators later by pointing your own server-side code at them, but the default flow here uses local verification only.
+- The browser flow already uses real wallet integration (wagmi + viem + MetaMask).
 
 Environment
 - Copy `.env.example` to `.env` and update values as needed before running in other environments.
 
 Environment variables
 - Copy `.env.example` to `.env` and update values as needed before running in other environments.
-- For local development you can use the Mock Facilitator (default `http://localhost:9000`). In production use the network-specific facilitator URL returned by x402 docs (e.g. `https://openx402.ai/base`).
-- `PRICE_IN_USDC` is a human-friendly decimal string (e.g. `0.0001`). When making on-chain transfers convert with `ethers.parseUnits(PRICE_IN_USDC, 6)` for USDC on Base.
-- If you want an autonomous agent to test payments, set `AGENT_PRIVATE_KEY` in your `.env` (do not commit private keys).
+- `PRICE_IN_USDC` is a human-friendly decimal string (e.g. `0.0001`). When making on-chain transfers convert with 6 decimals for USDC on Base.
+- Set `LOCAL_FACILITATOR_API_KEY` to any non-empty string to protect `/api/payments/*`.
+- Set `AGENT_PRIVATE_KEY` in your `.env` for the agent script (do **not** commit private keys).
 
 Startup validation
 - The server includes a small `requireConfig()` helper (in `lib/config.ts`) that will assert critical env vars in production. You can call it at startup if you want to fail-fast on missing config.
