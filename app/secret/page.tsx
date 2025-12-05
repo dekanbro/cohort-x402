@@ -103,6 +103,86 @@ export default function SecretPage() {
     try {
       setStatus('loading');
       setErrorMsg(null);
+      // If using EIP-3009 / exact scheme, sign an authorization instead of
+      // sending a direct USDC transfer.
+      if (paymentReq.scheme === 'exact') {
+        const nowSec = Math.floor(Date.now() / 1000);
+        const validAfter = nowSec;
+        const validBefore = nowSec + 3600; // 1 hour window
+
+        const amountDecimal = paymentReq.amount || paymentReq.price || '0.0001';
+        const decimals = 6; // USDC on Base has 6 decimals
+        const value = parseUnits(amountDecimal, decimals).toString();
+
+        const domain = {
+          name: 'USD Coin',
+          version: '2',
+          chainId: 8453,
+          verifyingContract: paymentReq.tokenAddress,
+        };
+
+        const types = {
+          TransferWithAuthorization: [
+            { name: 'from', type: 'address' },
+            { name: 'to', type: 'address' },
+            { name: 'value', type: 'uint256' },
+            { name: 'validAfter', type: 'uint256' },
+            { name: 'validBefore', type: 'uint256' },
+            { name: 'nonce', type: 'bytes32' },
+          ],
+        } as const;
+
+        const nonceBytes = crypto.getRandomValues(new Uint8Array(32));
+        const nonceHex = Array.from(nonceBytes)
+          .map((b) => b.toString(16).padStart(2, '0'))
+          .join('');
+        const nonce = `0x${nonceHex}`;
+
+        const message = {
+          from: address,
+          to: paymentReq.recipient,
+          value,
+          validAfter: BigInt(validAfter).toString(),
+          validBefore: BigInt(validBefore).toString(),
+          nonce,
+        };
+
+        const typedData = {
+          types: {
+            EIP712Domain: [
+              { name: 'name', type: 'string' },
+              { name: 'version', type: 'string' },
+              { name: 'chainId', type: 'uint256' },
+              { name: 'verifyingContract', type: 'address' },
+            ],
+            ...types,
+          },
+          primaryType: 'TransferWithAuthorization',
+          domain,
+          message,
+        } as const;
+
+        const signature = await (window as any).ethereum.request({
+          method: 'eth_signTypedData_v4',
+          params: [address, JSON.stringify(typedData)],
+        });
+
+        const payment = {
+          x402Version: 1,
+          paymentPayload: {
+            scheme: 'exact',
+            network: paymentReq.network || 'base',
+            payload: {
+              authorization: message,
+              signature,
+            },
+          },
+          paymentRequirements: { ...paymentReq, scheme: 'exact' },
+        };
+
+        await loadSecret(payment);
+        return;
+      }
       // If the payment requires Base, proactively ask the wallet to switch first.
       try {
         if (paymentReq.network && String(paymentReq.network).toLowerCase().includes('base')) {
@@ -269,8 +349,15 @@ export default function SecretPage() {
           <p className="font-semibold">Payment required</p>
           <p>Scheme: {paymentReq.scheme || 'evm-txhash'}</p>
           <p>Amount: {paymentReq.amount || paymentReq.price || 'unknown'} USDC</p>
-            <div className="mt-3 flex flex-wrap gap-3">
-            <Button variant="primary" onClick={payWithWallet}>Pay with Wallet</Button>
+          <p className="text-sm text-muted-foreground mt-1">
+            {paymentReq.scheme === 'exact'
+              ? 'This secret is paywalled. Sign an authorization for the requested amount of USDC on Base to unlock it via an EIP-3009 facilitator.'
+              : 'This secret is paywalled. Send the requested amount of USDC on Base to unlock it.'}
+          </p>
+          <div className="mt-3 flex flex-wrap gap-3">
+            <Button variant="primary" onClick={payWithWallet}>
+              {paymentReq.scheme === 'exact' ? 'Sign message' : 'Pay with Wallet'}
+            </Button>
             {/* Switch to Base moved to header connect control */}
           </div>
         </div>
