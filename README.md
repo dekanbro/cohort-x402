@@ -10,6 +10,14 @@ This repository provides a minimal scaffold to implement and test an x402-style 
 
 Quick start (Linux / bash)
 
+0. Set up env and funding:
+	- Copy `.env.example` to `.env`.
+	- Set `USDC_BASE_ADDRESS` to the real Base USDC contract (default is mainnet).
+	- Set `SERVICE_RECIPIENT_ADDRESS` to a wallet you control.
+	- Set `LOCAL_FACILITATOR_API_KEY` to any non-empty string.
+	- For the browser flow, fund your MetaMask Base account with a bit of Base ETH and Base USDC.
+	- For the agent flow, set `AGENT_PRIVATE_KEY` (funded on Base) and optionally `NEXT_PUBLIC_RPC_URL` if you need a custom Base RPC.
+
 1. Install `pnpm` (if you don't have it):
 
 ```bash
@@ -41,9 +49,6 @@ Notes
 - You can still experiment with external facilitators later by pointing your own server-side code at them, but the default flow here uses local verification only.
 - The browser flow already uses real wallet integration (wagmi + viem + MetaMask).
 
-Environment
-- Copy `.env.example` to `.env` and update values as needed before running in other environments.
-
 Environment variables
 - Copy `.env.example` to `.env` and update values as needed before running in other environments.
 - `PRICE_IN_USDC` is a human-friendly decimal string (e.g. `0.0001`). When making on-chain transfers convert with 6 decimals for USDC on Base.
@@ -54,5 +59,4 @@ Startup validation
 - The server includes a small `requireConfig()` helper (in `lib/config.ts`) that will assert critical env vars in production. You can call it at startup if you want to fail-fast on missing config.
 
 Next steps
-- If you want, I can add a `pnpm` lockfile or run `pnpm install` to generate `pnpm-lock.yaml` (I can't run it from here, but I can show the exact command to run locally).
 - I can also add automated integration tests next (supertest + jest/playwright) that use the mock facilitator.
