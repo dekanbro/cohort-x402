@@ -1,4 +1,4 @@
-import { createWalletClient, http, parseUnits, signTypedData } from 'viem';
+import { createWalletClient, http, parseUnits } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
 import { base } from 'viem/chains';
 
@@ -103,7 +103,7 @@ export async function runAgentClient() {
       nonce,
     } as const;
 
-    const signature = await signTypedData(walletClient, {
+    const signature = await walletClient.signTypedData({
       domain,
       types,
       primaryType: 'TransferWithAuthorization',

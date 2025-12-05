@@ -1,0 +1,354 @@
+:root {
+  --glow: radial-gradient(120% 80% at 20% 20%, rgba(210, 93, 65, 0.16), transparent 55%),
+    radial-gradient(80% 80% at 80% 10%, rgba(83, 74, 19, 0.12), transparent 55%);
+}
+
+.page {
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+.hero {
+  position: relative;
+  overflow: hidden;
+  background: var(--surface);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  border-radius: 16px;
+  padding: 2.25rem;
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.06);
+  isolation: isolate;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--glow);
+  opacity: 0.95;
+  z-index: -1;
+}
+
+.heroGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.75rem;
+  align-items: center;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.85rem;
+  background: rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: 999px;
+  font-size: 0.9rem;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.title {
+  font-family: 'Mazius Display', 'EB Garamond', serif;
+  font-size: 3.1rem;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  margin: 1rem 0 0.75rem;
+}
+
+.lede {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  max-width: 640px;
+  color: var(--neutral-700);
+}
+
+.ctaRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin: 1.25rem 0 0.35rem;
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.7rem 1.4rem;
+  border-radius: 10px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: transform 140ms ease, box-shadow 160ms ease, opacity 120ms ease;
+}
+
+.button:active {
+  transform: translateY(1px);
+}
+
+.primary {
+  background: linear-gradient(120deg, var(--moloch-500), var(--moloch-400));
+  color: var(--scroll-100);
+  box-shadow: 0 10px 28px rgba(189, 72, 45, 0.32);
+}
+
+.primary:hover {
+  filter: brightness(0.95);
+}
+
+.secondary {
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--neutral-800);
+}
+
+.secondary:hover {
+  border-color: rgba(0, 0, 0, 0.14);
+}
+
+.microcopy {
+  font-size: 0.95rem;
+  color: var(--neutral-600);
+}
+
+.heroArt {
+  position: relative;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.heroCard {
+  position: relative;
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: 14px;
+  padding: 0.65rem 0.75rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: 0.75rem;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
+}
+
+.heroCardTitle {
+  font-weight: 700;
+  color: var(--neutral-800);
+}
+
+.heroCardSub {
+  font-size: 0.9rem;
+  color: var(--neutral-700);
+}
+
+.section {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.sectionHeader h2 {
+  font-family: 'EB Garamond', serif;
+  font-size: 1.85rem;
+  margin: 0.25rem 0;
+}
+
+.kicker {
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 0.85rem;
+  color: var(--moloch-500);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1rem;
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.05);
+}
+
+.card h3 {
+  font-family: 'EB Garamond', serif;
+  font-size: 1.25rem;
+  margin-bottom: 0.35rem;
+}
+
+.card p {
+  color: var(--neutral-700);
+  line-height: 1.55;
+}
+
+.chipList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.chip {
+  padding: 0.35rem 0.6rem;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.04);
+  font-size: 0.9rem;
+  color: var(--neutral-700);
+}
+
+.list {
+  display: grid;
+  gap: 0.35rem;
+  color: var(--neutral-700);
+}
+
+.list strong {
+  color: var(--neutral-800);
+}
+
+.divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.14), transparent);
+}
+
+.ctaPanel {
+  background: linear-gradient(135deg, rgba(189, 72, 45, 0.1), rgba(83, 74, 19, 0.07));
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 14px;
+  padding: 1.5rem;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.logoRow {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  color: var(--neutral-700);
+  font-size: 0.95rem;
+}
+
+.cohortSection {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.cohortBody {
+  color: var(--neutral-700);
+  line-height: 1.55;
+}
+
+.avatarRow {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-top: 0.25rem;
+}
+
+.avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--moloch-500), var(--scroll-400));
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  color: var(--scroll-100);
+  text-decoration: none;
+  border: 2px solid rgba(0, 0, 0, 0.06);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
+  transition: transform 140ms ease, box-shadow 160ms ease, opacity 120ms ease;
+}
+
+.avatar:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.16);
+}
+
+.avatar span {
+  font-size: 0.95rem;
+  letter-spacing: 0.02em;
+}
+
+@media (max-width: 600px) {
+  .title {
+    font-size: 2.25rem;
+  }
+  .hero {
+    padding: 1.5rem;
+  }
+}
+
+/* Dark mode tuning for contrast */
+:global(.dark) .hero {
+  background: rgba(7, 16, 36, 0.92);
+  border-color: rgba(255, 255, 255, 0.06);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
+}
+
+:global(.dark) .hero::before {
+  opacity: 0.4;
+}
+
+:global(.dark) .badge,
+:global(.dark) .chip {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.08);
+  color: var(--scroll-100);
+}
+
+:global(.dark) .lede,
+:global(.dark) .card p,
+:global(.dark) .list,
+:global(.dark) .microcopy,
+:global(.dark) .logoRow {
+  color: var(--neutral-100);
+}
+
+:global(.dark) .card {
+  background: rgba(12, 22, 46, 0.9);
+  border-color: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.5);
+}
+
+:global(.dark) .ctaPanel {
+  background: linear-gradient(135deg, rgba(189, 72, 45, 0.2), rgba(83, 74, 19, 0.18));
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+:global(.dark) .secondary {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--scroll-100);
+  border-color: rgba(255, 255, 255, 0.14);
+}
+
+:global(.dark) .primary {
+  box-shadow: 0 12px 32px rgba(189, 72, 45, 0.45);
+}
+
+:global(.dark) .divider {
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.18), transparent);
+}
+
+:global(.dark) .heroCard {
+  background: rgba(12, 22, 46, 0.92);
+  border-color: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.55);
+}
+
+:global(.dark) .heroCardTitle {
+  color: var(--scroll-100);
+}
+
+:global(.dark) .heroCardSub {
+  color: var(--neutral-100);
+}

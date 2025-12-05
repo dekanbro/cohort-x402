@@ -30,7 +30,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 </div>
               </div>
             </header>
-            <main className="p-8 max-w-4xl mx-auto">{children}</main>
+            <main className="p-6 md:p-10">{children}</main>
           </WalletProvider>
         </ThemeProvider>
       </body>

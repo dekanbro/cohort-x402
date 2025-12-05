@@ -77,7 +77,7 @@ body {
 
 .card { background: var(--surface); border: 1px solid var(--muted); border-radius: var(--radius); padding: 1rem; }
 
-/* Optional: font-face declarations. Add font files to `public/fonts/` as recommended by the brand docs.
+/* Brand font-face declarations */
 @font-face {
   font-family: 'Mazius Display';
   src: url('/fonts/MAZIUSREVIEW20.09-Regular.woff') format('woff');
@@ -90,6 +90,13 @@ body {
   src: url('/fonts/EBGaramond-VariableFont_wght.ttf') format('truetype');
   font-weight: 100 900;
   font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'EB Garamond';
+  src: url('/fonts/EBGaramond-Italic-VariableFont_wght.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: italic;
   font-display: swap;
 }
 @font-face {
@@ -145,4 +152,3 @@ body {
 .rg-btn-sm { padding: 0.35rem 1rem; font-size: 0.9rem; }
 .rg-btn-lg { padding: 0.85rem 2.5rem; font-size: 1.05rem; }
 .rg-btn-icon { padding: 0.35rem; width: 2rem; height: 2rem; }
-
