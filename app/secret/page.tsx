@@ -376,7 +376,7 @@ export default function SecretPage() {
             </div>
           )}
           <div className="mt-3 flex flex-wrap gap-3">
-            <Button variant="primary" onClick={payWithWallet} disabled={!isConnected || status==='loading'}>
+            <Button variant="primary" onClick={payWithWallet} disabled={!isConnected || status === 'loading'}>
               {paymentReq.scheme === 'exact' ? 'Sign message' : 'Pay with Wallet'}
             </Button>
             {networkMismatch && (
