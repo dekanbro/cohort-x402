@@ -279,6 +279,56 @@
   letter-spacing: 0.02em;
 }
 
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(3px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  z-index: 50;
+}
+
+.modal {
+  background: var(--surface);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 12px;
+  max-width: 440px;
+  width: 100%;
+  padding: 1.25rem;
+  box-shadow: 0 18px 36px rgba(0, 0, 0, 0.25);
+}
+
+.modal h3 {
+  font-family: 'EB Garamond', serif;
+  font-size: 1.3rem;
+  margin-bottom: 0.35rem;
+}
+
+.modal p {
+  color: var(--neutral-700);
+  line-height: 1.5;
+}
+
+.modalActions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+  margin-top: 1rem;
+}
+
+:global(.dark) .modal {
+  background: rgba(12, 22, 46, 0.96);
+  border-color: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.65);
+}
+
+:global(.dark) .modal p {
+  color: var(--neutral-100);
+}
+
 @media (max-width: 600px) {
   .title {
     font-size: 2.25rem;

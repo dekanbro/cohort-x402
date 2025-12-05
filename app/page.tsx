@@ -1,5 +1,8 @@
+"use client";
+
 import Image from 'next/image';
 import Link from 'next/link';
+import { useState } from 'react';
 import styles from './landing.module.css';
 
 const features = [
@@ -58,6 +61,8 @@ function initials(name: string) {
 }
 
 export default function Page() {
+  const [showDeployModal, setShowDeployModal] = useState(false);
+
   return (
     <main className={styles.page}>
       <section className={styles.hero}>
@@ -87,13 +92,13 @@ export default function Page() {
                 priority
                 style={{ borderRadius: 12, border: '1px solid rgba(0,0,0,0.05)' }}
               />
-              <div className={styles.heroCard}>
+              <button className={styles.heroCard} onClick={() => setShowDeployModal(true)}>
                 <Image src="/logos/logo-mark-m500.svg" alt="RaidGuild mark" width={40} height={40} />
                 <div>
-                  <div className={styles.heroCardTitle}>x402 Facilitator</div>
-                  <div className={styles.heroCardSub}>Open. Base-native. Cohort-ready.</div>
+                  <div className={styles.heroCardTitle}>Host your own</div>
+                  <div className={styles.heroCardSub}>One-click Vercel deploy (coming soon)</div>
                 </div>
-              </div>
+              </button>
             </div>
           </div>
         </div>
@@ -187,6 +192,21 @@ export default function Page() {
           <p className={styles.microcopy}>Need a white-labeled facilitator or custom pricing logic? Let’s talk.</p>
         </div>
       </section>
+
+      {showDeployModal && (
+        <div className={styles.modalOverlay} role="dialog" aria-modal="true">
+          <div className={styles.modal}>
+            <h3>One-click Vercel deploy</h3>
+            <p>This demo will soon support a one-click Vercel deploy so you can host your own facilitator. For now, reach out and we’ll help you spin up a hosted instance.</p>
+            <div className={styles.modalActions}>
+              <button className={`${styles.button} ${styles.secondary}`} onClick={() => setShowDeployModal(false)}>Close</button>
+              <a className={`${styles.button} ${styles.primary}`} href="mailto:hello@raidguild.org?subject=Host my own x402 facilitator" onClick={() => setShowDeployModal(false)}>
+                Talk to RaidGuild
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   );
 }
