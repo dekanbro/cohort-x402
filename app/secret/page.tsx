@@ -32,6 +32,7 @@ export default function SecretPage() {
   const { switchChain } = useSwitchChain();
   const [networkMismatch, setNetworkMismatch] = useState<string | null>(null);
   // Balance display is handled in the global account dropdown, not on this page
+  const isLoading = status === 'loading';
 
   // When the global wagmi account or payment requirement changes, re-check network
   useEffect(() => {
@@ -39,7 +40,7 @@ export default function SecretPage() {
     if (paymentReq && address) {
       checkNetwork();
     }
-  }, [paymentReq, address]);
+  }, [paymentReq, address, chainId]);
   // Connection handled globally via the header/wagmi provider
 
   async function loadSecret(withPayment?: any) {
@@ -96,6 +97,10 @@ export default function SecretPage() {
   // Wallet-based payment: send USDC (ERC-20) to recipient and use txHash as proof
   async function payWithWallet() {
     if (!paymentReq) return;
+    if (!isConnected || !address) {
+      setErrorMsg('Connect a wallet to pay.');
+      return;
+    }
     if (!(window as any).ethereum) {
       setErrorMsg('No injected wallet (e.g. MetaMask) found');
       return;
@@ -228,6 +233,13 @@ export default function SecretPage() {
       const decimals = 6; // USDC on Base has 6 decimals
       const amount = parseUnits(amountDecimal, decimals);
 
+      // Final guard: if still not on Base, abort before sending
+      if (paymentReq.network && String(paymentReq.network).toLowerCase().includes('base') && Number(chainId ?? 0) !== 8453) {
+        setErrorMsg('Please switch your wallet to Base (chainId 8453) to continue.');
+        setStatus('idle');
+        return;
+      }
+
       const data = encodeFunctionData({
         abi: erc20Abi,
         functionName: 'transfer',
@@ -272,9 +284,9 @@ export default function SecretPage() {
         const expected = String(paymentReq.network).toLowerCase();
         const chainIdNum = Number(chainId ?? 0);
         if (expected.includes('base') && chainIdNum !== 8453) {
-              setNetworkMismatch(`Connected chainId ${chainIdNum} != expected Base (8453)`);
-              return false;
-            }
+          setNetworkMismatch(`Connected chainId ${chainIdNum} != expected Base (8453)`);
+          return false;
+        }
       }
       setNetworkMismatch(null);
       return true;
@@ -354,11 +366,25 @@ export default function SecretPage() {
               ? 'This secret is paywalled. Sign an authorization for the requested amount of USDC on Base to unlock it via an EIP-3009 facilitator.'
               : 'This secret is paywalled. Send the requested amount of USDC on Base to unlock it.'}
           </p>
+          {networkMismatch && (
+            <div className="mt-2 text-sm text-red-700">
+              {networkMismatch}
+            </div>
+          )}
+          {!isConnected && (
+            <div className="mt-2 text-sm text-red-700">
+              Connect your wallet to continue (use the top-right connect control).
+            </div>
+          )}
           <div className="mt-3 flex flex-wrap gap-3">
-            <Button variant="primary" onClick={payWithWallet}>
+            <Button variant="primary" onClick={payWithWallet} disabled={!isConnected || isLoading}>
               {paymentReq.scheme === 'exact' ? 'Sign message' : 'Pay with Wallet'}
             </Button>
-            {/* Switch to Base moved to header connect control */}
+            {networkMismatch && (
+              <Button variant="secondary" onClick={switchToBase}>
+                Switch to Base
+              </Button>
+            )}
           </div>
         </div>
       )}
