@@ -32,6 +32,7 @@ export default function SecretPage() {
   const { switchChain } = useSwitchChain();
   const [networkMismatch, setNetworkMismatch] = useState<string | null>(null);
   // Balance display is handled in the global account dropdown, not on this page
+  const isLoading = status === 'loading';
 
   // When the global wagmi account or payment requirement changes, re-check network
   useEffect(() => {
@@ -376,7 +377,7 @@ export default function SecretPage() {
             </div>
           )}
           <div className="mt-3 flex flex-wrap gap-3">
-            <Button variant="primary" onClick={payWithWallet} disabled={!isConnected || status === 'loading'}>
+            <Button variant="primary" onClick={payWithWallet} disabled={!isConnected || isLoading}>
               {paymentReq.scheme === 'exact' ? 'Sign message' : 'Pay with Wallet'}
             </Button>
             {networkMismatch && (
