@@ -343,36 +343,47 @@ export default function SecretPage() {
   // removed checkTokenBalance; rely on contract/wallet for insufficient-balance errors
 
   return (
-    <main className="max-w-2xl mx-auto">
-      {/* header connect control moved to app header (ConnectWallet) */}
-      {/* Center the button vertically when idle, otherwise keep normal spacing */}
-      <div
-        className={status === 'idle' ? 'mb-8 flex justify-center items-center' : 'mb-8 flex justify-center'}
-        style={status === 'idle' ? { minHeight: '60vh' } : undefined}
-      >
-        <Button variant="primary" onClick={() => loadSecret()} disabled={status==='loading'}>Load Secret</Button>
+    <main className="max-w-3xl mx-auto space-y-5">
+      <div className="card">
+        <h1 className="text-xl font-semibold mb-1">x402 Secret Demo</h1>
+        <p className="text-sm text-muted-foreground">
+          Load the secret, then pay with your wallet on Base to unlock. This flow will evolve into a “buy one-month pass” (≈5 USDC)
+          that issues an API key for facilitator access—this page is the future home for that experience.
+        </p>
       </div>
-      
 
-      {status === 'loading' && <p>Loading…</p>}
+      <div className="card">
+        <div className="flex items-center justify-between gap-3 flex-wrap">
+          <div>
+            <p className="font-semibold">Step 1: Request access</p>
+            <p className="text-sm text-muted-foreground">Fetch payment requirements and see if the secret is already unlocked.</p>
+          </div>
+          <Button variant="primary" onClick={() => loadSecret()} disabled={isLoading}>
+            {status === 'loading' ? 'Loading…' : 'Load Secret'}
+          </Button>
+        </div>
+      </div>
 
       {status === 'needsPayment' && paymentReq && (
-        <div className="card">
-          <p className="font-semibold">Payment required</p>
-          <p>Scheme: {paymentReq.scheme || 'evm-txhash'}</p>
-          <p>Amount: {paymentReq.amount || paymentReq.price || 'unknown'} USDC</p>
-          <p className="text-sm text-muted-foreground mt-1">
+        <div className="card space-y-2">
+          <div>
+            <p className="font-semibold">Step 2: Pay with wallet</p>
+            <p className="text-sm text-muted-foreground">
+              Scheme: {paymentReq.scheme || 'evm-txhash'} · Amount: {paymentReq.amount || paymentReq.price || 'unknown'} USDC
+            </p>
+          </div>
+          <p className="text-sm text-muted-foreground">
             {paymentReq.scheme === 'exact'
-              ? 'This secret is paywalled. Sign an authorization for the requested amount of USDC on Base to unlock it via an EIP-3009 facilitator.'
-              : 'This secret is paywalled. Send the requested amount of USDC on Base to unlock it.'}
+              ? 'Sign an authorization for the requested amount of USDC on Base (EIP-3009 facilitator).'
+              : 'Send the requested amount of USDC on Base to unlock the secret.'}
           </p>
           {networkMismatch && (
-            <div className="mt-2 text-sm text-red-700">
+            <div className="mt-1 text-sm text-red-700">
               {networkMismatch}
             </div>
           )}
           {!isConnected && (
-            <div className="mt-2 text-sm text-red-700">
+            <div className="mt-1 text-sm text-red-700">
               Connect your wallet to continue (use the top-right connect control).
             </div>
           )}
@@ -389,20 +400,20 @@ export default function SecretPage() {
         </div>
       )}
 
-      {errorMsg && (
-        <div className="mt-4 p-3 border border-muted card">
-          <p className="font-semibold">Error</p>
-          <pre className="whitespace-pre-wrap">{errorMsg}</pre>
-          <div className="mt-2">
-            <button className="px-3 py-1 border rounded" onClick={() => { setErrorMsg(null); loadSecret(); }}>Retry</button>
-          </div>
+      {status === 'unlocked' && secret && (
+        <div className="card">
+          <h3 className="text-lg font-medium mb-2">Secret</h3>
+          <pre className="p-3 rounded border border-muted bg-bg whitespace-pre-wrap">{secret}</pre>
         </div>
       )}
 
-      {status === 'unlocked' && secret && (
-        <div className="mt-6">
-          <h3 className="text-lg font-medium">Secret</h3>
-          <pre className="mt-2 p-3 card">{secret}</pre>
+      {errorMsg && (
+        <div className="card">
+          <p className="font-semibold">Error</p>
+          <pre className="whitespace-pre-wrap mt-1">{errorMsg}</pre>
+          <div className="mt-2">
+            <button className="px-3 py-1 border rounded" onClick={() => { setErrorMsg(null); loadSecret(); }}>Retry</button>
+          </div>
         </div>
       )}
     </main>
